@@ -43,7 +43,7 @@ class SpatialIndex(object):
                        item_bound[4] >= sub_bound[1] and item_bound[1] < sub_bound[4] and \
                        item_bound[5] >= sub_bound[2] and item_bound[2] < sub_bound[5]:
                            sub_items.append(item)
-                q1 += 1 if len(sub_items) == len(item) else 0
+                q1 += 1 if len(sub_items) == len(items) else 0
                 q2 = (sub_bound[3] - sub_bound[0]) < (TOLERANCE * 4.0)
                 if len(sub_items) > 0:
                     self.vector[s] = SpatialIndex(sub_bound, sub_items, MAX_LEVELS if q1 > 1 or q2 else level + 1)
