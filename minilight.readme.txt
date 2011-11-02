@@ -1,0 +1,222 @@
+
+
+MiniLight 1.5.2
+======================================================================
+
+
+Copyright (c) 2006-2008, Harrison Ainsworth / HXA7241.  
+http://wwww.hxa7241.org/minilight/
+
+2008-02-17
+
+
+
+
+Contents
+--------
+
+* Description
+* Usage
+* Acknowledgements
+* Appendix
+* License
+
+
+
+
+Description
+-----------
+
+MiniLight is a minimal global illumination renderer. It is primarily an exercise
+in simplicity. Someone asked me how to develop a renderer in three months. It
+seemed not nearly enough time. But then I began to think how small such a
+program could be, whilst still being a complete physically based simulation with
+a clear, well-formed design...
+
+It is a command-line application. It reads a simple text model file and writes a
+PPM image file. Supported platforms include Windows, Mac, and Linux.
+
+Full source code is provided under the (new) BSD license. There are various
+translations, all of nine or ten classes/modules. The design follows one for a
+full-scale renderer, and an architecture description document is included.
+
+The features are:
+* Monte-carlo path-tracing transport
+* Emitter sampling
+* Progressive refinement
+* RGB light
+* Diffuse materials
+* Triangle modelling primitives
+* Octree spatial index
+* Pin-hole 'lens'
+* Ward linear tone-mapping
+
+See the translation-specific readmes for installation and build information.
+
+
+
+
+Usage
+-----
+
+When running it, just supply a model file name, eg.:  
+   minilight modelFilePathName
+
+The model file format is:  
+   #MiniLight
+
+   iterations
+
+   imagewidth imageheight
+
+   viewposition viewdirection viewangle
+
+   skyemission groundreflection
+   trivertex0 trivertex1 trivertex2 reflectivity emitivity  
+   trivertex0 trivertex1 trivertex2 reflectivity emitivity  
+   ...
+
+-- where iterations and image values are ints, viewangle is a float, and all
+other values are three parenthised floats. The file must end with a newline.
+For example:
+   #MiniLight
+
+   100
+
+   200 150
+
+   (0 0.75 -2) (0 0 1) 45
+
+   (3626 5572 5802) (0.1 0.09 0.07)
+   (0 0 0) (0 1 0) (1 1 0)  (0.7 0.7 0.7) (0 0 0)
+
+This description is available using help:  
+   minilight {-?|--help}
+
+To interrupt a render, press ctrl-c (or press the 'stop' button).
+
+* World axes are: X positive rightwards, Y positive upwards, Z positive
+forwards.
+* Triangle front face has clock-wise vertexes.
+* Triangles are reflective (therefore visible) on both faces, but emissive on
+the front face only.
+* errors in a model file may or may not be reported, and then not clearly
+
+
+
+
+Acknowledgements
+----------------
+
+### Favourite rendering books ###
+
+* 'Principles Of Digital Image Synthesis'  
+  Andrew Glassner;  
+  Morgan Kaufmann, 1995.  
+  1-55860-276-3
+* 'Realistic Image Synthesis Using Photon Mapping'  
+  Henrik Wann Jensen;  
+  AK Peters, 2001.  
+  1-56881-147-0
+* 'Global Illumination Compendium'  
+  Philip Dutre;  
+  http://www.cs.kuleuven.ac.be/~phil/GI/
+
+### Reused code/algorithms/equations ###
+
+* 'Fast, Minimum Storage Ray-Triangle Intersection'  
+  Moller, Trumbore;  
+  Journal of Graphics Tools, v2 n1 p21, 1997.  
+  http://www.acm.org/jgt/papers/MollerTrumbore97/
+* 'A Contrast Based Scalefactor For Luminance Display'  
+  Greg Ward/Larson;  
+  Graphics Gems 4, AP, 1994.  
+  0123361559
+* Random number generator (simple and fast but good)  
+  Glenn Rhoads;  
+  http://web.archive.org/web/20050213041650/http://
+  paul.rutgers.edu/~rhoads/Code/code.html
+* 'The Solid Angle of a Plane Triangle'  
+  Oosterom, Strackee;  
+  IEEE Transactions on Biomedical Engineering, Vol. BME-30, No. 2, 1983.
+
+### Image file format ###
+
+* PPM image format  
+  http://netpbm.sourceforge.net/doc/ppm.html
+* RGBE image format  
+  http://radsite.lbl.gov/radiance/refer/filefmts.pdf  
+  'Real Pixels'  
+  Greg Ward/Larson;  
+  Graphics Gems 2, AP, 1991.  
+  0120644819
+
+### tools ###
+
+* jEdit 4.3 editor 
+  http://www.jedit.org/
+
+
+
+
+Appendix
+--------
+
+### Models ###
+
+Here are the emitter values for the cornell box models:
+
+* morning
+   * sky:  8000 K,   5000 cd/m^2 (4532 4712 5756)
+* noon
+   * sun:  5400 K, 1*10^9 cd/m^2 (1177902548 993796380 828301072)
+   * sky: 10000 K,  10000 cd/m^2 (8068 9060 12872)
+* evening
+   * sun:  2000 K, 5*10^5 cd/m^2 (1182965 313131 3904)
+   * sky:  5000 K,    125 cd/m^2 (156 125 94)
+   * lamp: equal-energy white, 1000 cd/m^2
+* night
+   * sky:  8000 K,    0.1 cd/m^2 (0.0906 0.0942 0.1151)
+   * lamp: equal-energy white, 1000 cd/m^2
+
+The sun has a diameter of 1.392 x 10^9 m, and distance of 149.6 x 10^9 m. (It is
+just a square though.)
+
+
+### HDRI output ###
+
+Code for outputting images as Ward's RGBE/Radiance format is included in the C++
+translation. Search the source for HDRI and substitute-in the commented-out
+portions.
+
+
+
+
+License
+-------
+
+### (New) BSD ###
+
+Copyright (c) 2006-2008, Harrison Ainsworth / HXA7241.
+
+Redistribution and use in source and binary forms, with or without modification,
+are permitted provided that the following conditions are met:
+
+* Redistributions of source code must retain the above copyright notice, this
+  list of conditions and the following disclaimer.
+* Redistributions in binary form must reproduce the above copyright notice, this
+  list of conditions and the following disclaimer in the documentation and/or
+  other materials provided with the distribution.
+* The name of the author may not be used to endorse or promote products derived
+  from this software without specific prior written permission.
+
+THIS SOFTWARE IS PROVIDED BY THE AUTHOR "AS IS" AND ANY EXPRESS OR IMPLIED
+WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
+MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT
+SHALL THE AUTHOR BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL,
+EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT
+OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING
+IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY
+OF SUCH DAMAGE.
