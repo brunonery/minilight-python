@@ -76,6 +76,10 @@ if __name__ == '__main__':
         print HELP
     else:
         print BANNER
+        if argv[0] == 'minilight_depth.py':
+            frame_type = 'depth'
+        else:
+            frame_type = 'rgb'
         model_file_pathname = argv[1]
         image_file_pathname = model_file_pathname + '.ppm'
         model_file = open(model_file_pathname, 'r')
@@ -92,7 +96,7 @@ if __name__ == '__main__':
         last_time = time() - (SAVE_PERIOD + 1)
         try:
             for frame_no in range(1, iterations + 1):
-                camera.get_frame(scene, image)
+                camera.get_frame(scene, image, frame_type)
                 if SAVE_PERIOD < time() - last_time or frame_no == iterations:
                     last_time = time()
                     save_image(image_file_pathname, image, frame_no)

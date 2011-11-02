@@ -31,7 +31,7 @@ class Camera(object):
                     self.up = self.view_direction.cross(self.right).unitize()
                 break
 
-    def get_frame(self, scene, image):
+    def get_frame(self, scene, image, frame_type='depth'):
         raytracer = RayTracer(scene)
         aspect = float(image.height) / float(image.width)
         for y in range(image.height):
@@ -40,6 +40,9 @@ class Camera(object):
                 y_coefficient = ((y + random()) * 2.0 / image.height) - 1.0
                 offset = self.right * x_coefficient + self.up * (y_coefficient * aspect)
                 sample_direction = (self.view_direction + (offset * tan(self.view_angle * 0.5))).unitize()
-                radiance = raytracer.get_radiance(self.view_position, sample_direction)
-                image.add_to_pixel(x, y, radiance)
-
+                if frame_type == 'depth':
+                    distance = raytracer.get_distance_to_first_hit(self.view_position, sample_direction)
+                    image.add_to_pixel(x, y, distance)
+                else:
+                    radiance = raytracer.get_radiance(self.view_position, sample_direction)
+                    image.add_to_pixel(x, y, radiance)

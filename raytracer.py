@@ -33,3 +33,12 @@ class RayTracer(object):
             return surface_point.get_reflection(emit_direction, emission_in * self.scene_ref.emitters_count(), -ray_direction)
         else:
             return ZERO
+
+    def get_distance_to_first_hit(self, ray_origin, ray_direction):
+        hit_ref, p, distance = self.scene_ref.get_intersection(ray_origin, ray_direction, None)
+        if hit_ref:
+            # The image gets whiter as we get far from the camera.
+            return (distance, distance, distance)
+        else:
+            # If the ray doesn't hit an object now, it doesn't contribute to the pixel.
+            return (0, 0, 0)
