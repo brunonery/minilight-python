@@ -32,6 +32,7 @@ class Scene(object):
                 self.index = SpatialIndex(eye_position, self.triangles)
 
                 self.get_intersection = self.index.get_intersection
+                self.get_last_intersection = self.index.get_last_intersection
                 break
 
 ##    def get_intersection(self, ray_origin, ray_direction, last_hit):

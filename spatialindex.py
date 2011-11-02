@@ -98,3 +98,54 @@ class SpatialIndex(object):
                                hit_position = hit
                                nearest_distance = distance
         return hit_object, hit_position, nearest_distance
+
+    def get_last_intersection(self, ray_origin, ray_direction, last_hit, start=None):
+        start = start if start else ray_origin
+        hit_object = hit_position = None
+        farthest_distance = 0
+        if self.is_branch:
+            sub_cell = 1 if start[0] >= (self.bound[0] + self.bound[3]) * 0.5 else 0
+            if start[1] >= (self.bound[1] + self.bound[4]) * 0.5:
+                sub_cell |= 2
+            if start[2] >= (self.bound[2] + self.bound[5]) * 0.5:
+                sub_cell |= 4
+            cell_position = start
+            while True:
+                if self.vector[sub_cell]:
+                    a_object, a_position, a_distance = self.vector[sub_cell].get_intersection(ray_origin, ray_direction, last_hit, cell_position)
+                    if a_object and a_distance > farthest_distance:
+                        hit_object = a_object
+                        hit_position = a_position
+                        farthest_distance = a_distance
+                step = float(2**1024 - 2**971)
+                axis = 0
+                for i in range(3):
+                    high = (sub_cell >> i) & 1
+                    face = self.bound[i + high * 3] if (ray_direction[i] < 0.0) ^ (0 != high) else (self.bound[i] + self.bound[i + 3]) * 0.5
+                    try:
+                        distance = (face - ray_origin[i]) / ray_direction[i]
+                    except:
+                        distance = float(1e30000)
+                    if distance <= step:
+                        step = distance
+                        axis = i
+                if (((sub_cell >> axis) & 1) == 1) ^ (ray_direction[axis] < 0.0):
+                    break
+                cell_position = ray_origin + ray_direction * step
+                sub_cell = sub_cell ^ (1 << axis)
+        else:
+            for item in self.vector:
+                if item != last_hit:
+                    distance = item.get_intersection(ray_origin, ray_direction)
+                    if distance and (distance > farthest_distance):
+                        hit = ray_origin + ray_direction * distance
+                        if (self.bound[0] - hit[0] <= TOLERANCE) and \
+                           (hit[0] - self.bound[3] <= TOLERANCE) and \
+                           (self.bound[1] - hit[1] <= TOLERANCE) and \
+                           (hit[1] - self.bound[4] <= TOLERANCE) and \
+                           (self.bound[2] - hit[2] <= TOLERANCE) and \
+                           (hit[2] - self.bound[5] <= TOLERANCE):
+                               hit_object = item
+                               hit_position = hit
+                               farthest_distance = distance
+        return hit_object, hit_position, farthest_distance

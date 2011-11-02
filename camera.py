@@ -43,6 +43,9 @@ class Camera(object):
                 if frame_type == 'depth':
                     distance = raytracer.get_distance_to_first_hit(self.view_position, sample_direction)
                     image.add_to_pixel(x, y, distance)
+                elif frame_type == 'reverse_depth':
+                    distance = raytracer.get_distance_to_last_hit(self.view_position, sample_direction)
+                    image.add_to_pixel(x, y, distance)
                 else:
                     radiance = raytracer.get_radiance(self.view_position, sample_direction)
                     image.add_to_pixel(x, y, radiance)

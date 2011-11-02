@@ -42,3 +42,12 @@ class RayTracer(object):
         else:
             # If the ray doesn't hit an object now, it doesn't contribute to the pixel.
             return (0, 0, 0)
+
+    def get_distance_to_last_hit(self, ray_origin, ray_direction):
+        hit_ref, p, distance = self.scene_ref.get_last_intersection(ray_origin, ray_direction, None)
+        if hit_ref:
+            # The image gets whiter as we get far from the camera.
+            return (distance, distance, distance)
+        else:
+            # If the ray doesn't hit an object now, it doesn't contribute to the pixel.
+            return (0, 0, 0)

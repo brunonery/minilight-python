@@ -78,6 +78,8 @@ if __name__ == '__main__':
         print BANNER
         if argv[0] == 'minilight_depth.py':
             frame_type = 'depth'
+        elif argv[0] == 'minilight_reverse_depth.py':
+            frame_type = 'reverse_depth'
         else:
             frame_type = 'rgb'
         model_file_pathname = argv[1]
