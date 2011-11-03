@@ -66,9 +66,12 @@ with a newline. Eg.:
 MODEL_FORMAT_ID = '#MiniLight'
 SAVE_PERIOD = 180
 
-def save_image(image_file_pathname, image, frame_no):
+def save_image(image_file_pathname, image, frame_no, frame_type='rgb'):
     image_file = open(image_file_pathname, 'wb')
-    image.get_formatted(image_file, frame_no - 1)
+    if frame_type == 'rgb':
+        image.get_formatted(image_file, frame_no - 1)
+    else:
+        image.get_distance_image(image_file, frame_no - 1)
     image_file.close()
 
 if __name__ == '__main__':
@@ -101,7 +104,7 @@ if __name__ == '__main__':
                 camera.get_frame(scene, image, frame_type)
                 if SAVE_PERIOD < time() - last_time or frame_no == iterations:
                     last_time = time()
-                    save_image(image_file_pathname, image, frame_no)
+                    save_image(image_file_pathname, image, frame_no, frame_type)
                 stdout.write('\b' * ((int(log10(frame_no - 1)) if frame_no > 1 else -1) + 12) + 'iteration: %u' % frame_no)
                 stdout.flush()
             print '\nfinished'

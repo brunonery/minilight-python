@@ -38,6 +38,18 @@ class Image(object):
             gammaed = (mapped if mapped > 0.0 else 0.0) ** GAMMA_ENCODE
             out.write(chr(min(int((gammaed * 255.0) + 0.5), 255)))
 
+    def get_distance_image(self, out, iteration):
+        divider = 1.0 / ((iteration if iteration > 0 else 0) + 1)
+        max_scaling = 1.0 / max(self.pixels)
+        out.write('%s\n# %s\n\n%u %u\n65535\n' % (PPM_ID, MINILIGHT_URI, self.width, self.height))
+        for channel in self.pixels:
+            # 16-bit PPM :)
+            mapped = int(min(channel * max_scaling * 65535.0, 65535))
+            first_byte = (mapped & 0xFF00) >> 8
+            second_byte = (mapped & 0x00FF)
+            out.write(chr(first_byte))
+            out.write(chr(second_byte))
+
     def calculate_tone_mapping(self, pixels, divider):
         sum_of_logs = 0.0
         for i in range(len(pixels) / 3):
