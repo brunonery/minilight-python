@@ -1,0 +1,9 @@
+This is a MiniLight fork that implements depth and reverse depth image
+rendering. MiniLight (http://www.hxa.name/minilight/) is a minimal global
+illumination renderer. Depth images show the distance to the points in a scene
+instead of their colors. Reverse depth images (I'm still trying to find a
+better name for that) show the distance to the point "behind" the same point in
+the depth image. In other words, they show the distance to the last point that
+intersects the light ray that goes from/to each point.
+
+-- Bruno Nery.
