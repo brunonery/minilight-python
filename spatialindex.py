@@ -112,7 +112,7 @@ class SpatialIndex(object):
             cell_position = start
             while True:
                 if self.vector[sub_cell]:
-                    a_object, a_position, a_distance = self.vector[sub_cell].get_intersection(ray_origin, ray_direction, last_hit, cell_position)
+                    a_object, a_position, a_distance = self.vector[sub_cell].get_last_intersection(ray_origin, ray_direction, last_hit, cell_position)
                     if a_object and a_distance > farthest_distance:
                         hit_object = a_object
                         hit_position = a_position
