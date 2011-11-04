@@ -74,11 +74,20 @@ def save_image(image_file_pathname, image, frame_no, frame_type='rgb'):
         image.get_distance_image(image_file, frame_no - 1)
     image_file.close()
 
+def save_ply_map(ply_file_pathname, image, frame_no, frame_type='rgb'):
+    if frame_type == 'rgb':
+        return
+    ply_file = open(ply_file_pathname, 'w')
+    image.get_ply_map(ply_file, frame_no - 1)
+    ply_file.close()
+
 if __name__ == '__main__':
     if len(argv) < 2 or argv[1] == '-?' or argv[1] == '--help':
         print HELP
     else:
         print BANNER
+        # Command-line arguments handling.
+        # TODO(brunonery): change command-line arguments handling to argparser.
         if argv[0] == 'minilight_depth.py':
             frame_type = 'depth'
         elif argv[0] == 'minilight_reverse_depth.py':
@@ -86,7 +95,13 @@ if __name__ == '__main__':
         else:
             frame_type = 'rgb'
         model_file_pathname = argv[1]
+        if len(argv) > 2 and argv[2] == '--with-pc':
+            make_point_cloud = True
+        else:
+            make_point_cloud = False
+            
         image_file_pathname = model_file_pathname + '.ppm'
+        ply_file_pathname = model_file_pathname + '.ply'
         model_file = open(model_file_pathname, 'r')
         if model_file.next().strip() != MODEL_FORMAT_ID:
             raise 'invalid model file'
@@ -105,9 +120,14 @@ if __name__ == '__main__':
                 if SAVE_PERIOD < time() - last_time or frame_no == iterations:
                     last_time = time()
                     save_image(image_file_pathname, image, frame_no, frame_type)
+                    if make_point_cloud:
+                        save_ply_map(ply_file_pathname, image, frame_no, frame_type)
                 stdout.write('\b' * ((int(log10(frame_no - 1)) if frame_no > 1 else -1) + 12) + 'iteration: %u' % frame_no)
                 stdout.flush()
             print '\nfinished'
         except KeyboardInterrupt:
             save_image(image_file_pathname, image, frame_no)
+            if make_point_cloud:
+                save_ply_map(ply_file_pathname, image, frame_no, frame_type)
             print '\ninterupted'
+
